@@ -23,11 +23,14 @@ def get_symbol_table_instructions(lines):
 		if bool(var.match(f[i])):
 			x=re.split(":",f[i])
 			text[x[0]]=hex(cur_location)
+			cur_location=cur_location-4
 		else:
 			tmp=f[i].split('#')[0]
 			tmp=" ".join(tmp.split())
 			instruction[str(hex(cur_location))]=tmp	
 		cur_location=cur_location+4
+
+
 	# print(instruction)
 	# print(text)
 	cur_location=0x10000000
