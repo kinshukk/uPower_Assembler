@@ -1,6 +1,7 @@
 import sys
 
 from pass_1 import get_symbol_table_instructions
+from pass_22 import convert_lines
 
 class Assembler:
     def __init__(self):
@@ -12,8 +13,12 @@ class Assembler:
                 lines = f.read().splitlines()
                 (instructions, text, data) = get_symbol_table_instructions(lines)
                 print(instructions)
-                print(data)
-                print(text)
+                print("\n\n\n")
+
+                object_lines = convert_lines(instructions, text, datai)
+
+                print(convert_lines)
+
         else:
             print("Usage: assemble.py [filename]")
     
