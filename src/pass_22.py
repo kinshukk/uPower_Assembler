@@ -33,9 +33,10 @@ def convert_lines(lines, label, data):
     
     for z in tqdm(lines):    
         #unpack key, value
+        print(z)
         u=z
         v=lines[z]
-        
+        print(f"u: {u}, v: {v}") 
         #function name (add, sub, etc.)
         func=v[:v.index(' ')]
         args=v[v.index(' '):]
@@ -120,6 +121,7 @@ def convert_lines(lines, label, data):
             fin_ans[u]=tmp
     
         elif func in instruct_b.keys():
+            print("B start!!")
             tmp += "{:06b}".format(instruct_b[func][0])
             tmp += "{:05b}".format(reg_to_num[req[0]])
             tmp += "{:05b}".format(reg_to_num[req[1]])
@@ -128,7 +130,7 @@ def convert_lines(lines, label, data):
                 print("Label not found in symbol table!!")
                 return
 
-            label_address = int(label[req[2]])
+            label_address = int(label[req[2]], 0)
             
             if instruct_b[func][-2] == 0:
                 label_address -= int(u)
@@ -137,9 +139,12 @@ def convert_lines(lines, label, data):
             tmp += "{:01b}".format(instruct_b[func][-2])
             tmp += "{:01b}".format(instruct_b[func][-1])
 
-            
+            print("B TYPE!!!")
 
-        elif func in instruct_m.keys():
-            pass
+            fin_ans[u] = tmp
+
+        else:
+            print(f"command '{func}' not recognized...exiting")
+            return
 
     return fin_ans
