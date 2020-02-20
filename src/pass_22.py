@@ -36,7 +36,7 @@ def convert_lines(lines, label, data):
         print(z)
         u=z
         v=lines[z]
-        print(f"u: {u}, v: {v}") 
+       # print(f"u: {u}, v: {v}") 
         #function name (add, sub, etc.)
         func=v[:v.index(' ')]
         args=v[v.index(' '):]
@@ -144,7 +144,7 @@ def convert_lines(lines, label, data):
             fin_ans[u] = tmp
 
         else:
-            print(f"command '{func}' not recognized...exiting")
+           # print(f"command '{func}' not recognized...exiting")
             return
 
     return fin_ans

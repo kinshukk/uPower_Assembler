@@ -12,7 +12,7 @@ class Assembler:
             with open(sys.argv[1], encoding="utf-8", mode="r") as f:
                 lines = f.read().splitlines()
                 (instructions, label, data) = get_symbol_table_instructions(lines)
-                print(f"instructions: {instructions} \ndata: {data} \nlabel: {label}")
+                print("instructions: {0} \ndata: {1} \nlabel: {2}".format(instructions,data,label))
                 print("\n\n\n")
 
                 object_lines = convert_lines(instructions, label, data)
