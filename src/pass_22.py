@@ -1,4 +1,6 @@
-def convert_lines(lines, text, data):
+from tqdm import tqdm
+
+def convert_lines(lines, label, data):
     instruct_x={"and":[31,None,0,28,None,None],"exstw":[31,None,0,986,None,None],"nand":[31,None,0,476,None,None],"or":[31,None,0,444,None,None],"xor":[31,None,0,316,None,None],"sld":[31,None,0,794,None,None],"srd":[31,None,0,539,None,None],"srad":[31,None,0,794,None,None],"cmp":[31,None,0,0,None,None]}
     
     instruct_xo={"add":[31,0,0,266,None,None],"subf":[31,0,0,40,None,None]}
@@ -12,7 +14,7 @@ def convert_lines(lines, text, data):
     instruct_xs={"sradi":[31,None,0,413,None,None]}
     
     
-    isntruct_i={"b":[18,None,None,None,0,0],"ba":[18,None,None,None,1,0],"bl":[18,None,None,None,0,1]}
+    instruct_i={"b":[18,None,None,None,0,0],"ba":[18,None,None,None,1,0],"bl":[18,None,None,None,0,1]}
     
     # take care
     instruct_b={"bc":[19,None,None,None,0,0],"bca":[19,None,None,None,1,0]}
@@ -29,7 +31,7 @@ def convert_lines(lines, text, data):
     fin_ans={}
     
     
-    for z in lines:    
+    for z in tqdm(lines):    
         #unpack key, value
         u=z
         v=lines[z]
@@ -66,13 +68,13 @@ def convert_lines(lines, text, data):
         elif func in instruct_d.keys():
             if instruct_d[func][-1] == 1:
                 #func RT, D(RA)
-                RT = req[0].trim()
+                RT = req[0].strip()
     
                 i1 = req[1].index('(')
                 i2 = req[1].index(')')
                 
-                SI = int(req[1][:i1].trim())
-                RA = req[1][i1+1:i2].trim()
+                SI = int(req[1][:i1].strip())
+                RA = req[1][i1+1:i2].strip()
                 
                 tmp += "{:06b}".format(instruct_d[func][0])
                 tmp += "{:05b}".format(reg_to_num[RT])
@@ -101,13 +103,13 @@ def convert_lines(lines, text, data):
             fin_ans[u]=tmp
     
         elif func in instruct_ds.keys():
-            RT = req[0].trim()
+            RT = req[0].strip()
     
             i1 = req[1].index('(')
             i2 = req[1].index(')')
                 
-            DS = int(req[1][:i1].trim())
-            RA = req[1][i1+1:i2].trim()
+            DS = int(req[1][:i1].strip())
+            RA = req[1][i1+1:i2].strip()
                 
             tmp += "{:06b}".format(instruct_d[func][0])
             tmp += "{:05b}".format(reg_to_num[RT])
@@ -118,8 +120,25 @@ def convert_lines(lines, text, data):
             fin_ans[u]=tmp
     
         elif func in instruct_b.keys():
-            pass
-    
+            tmp += "{:06b}".format(instruct_b[func][0])
+            tmp += "{:05b}".format(reg_to_num[req[0]])
+            tmp += "{:05b}".format(reg_to_num[req[1]])
+            
+            if req[2] not in label:
+                print("Label not found in symbol table!!")
+                return
+
+            label_address = int(label[req[2]])
+            
+            if instruct_b[func][-2] == 0:
+                label_address -= int(u)
+            
+            tmp += "{:014b}".format(label_address)
+            tmp += "{:01b}".format(instruct_b[func][-2])
+            tmp += "{:01b}".format(instruct_b[func][-1])
+
+            
+
         elif func in instruct_m.keys():
             pass
 

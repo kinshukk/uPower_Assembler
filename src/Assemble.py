@@ -11,13 +11,13 @@ class Assembler:
         if len(sys.argv[1:]) == 1:
             with open(sys.argv[1], encoding="utf-8", mode="r") as f:
                 lines = f.read().splitlines()
-                (instructions, text, data) = get_symbol_table_instructions(lines)
-                print(instructions)
+                (instructions, label, data) = get_symbol_table_instructions(lines)
+                print(f"instructions: {instructions} \ndata: {data} \nlabel: {label}")
                 print("\n\n\n")
 
-                object_lines = convert_lines(instructions, text, datai)
+                object_lines = convert_lines(instructions, label, data)
 
-                print(convert_lines)
+                print(object_lines)
 
         else:
             print("Usage: assemble.py [filename]")
