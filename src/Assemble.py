@@ -16,7 +16,11 @@ class Assembler:
                 print("\n\n\n")
 
                 object_lines = convert_lines(instructions, label, data)
-
+                with open('test.o',mode="w") as f:
+                    result=sorted([(i,object_lines[i]) for i in object_lines])
+                    result=[a[1] for a in result]
+                    result="".join(result)
+                    f.write(result)
                 print(object_lines)
 
         else:
