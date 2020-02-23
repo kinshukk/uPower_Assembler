@@ -23,3 +23,7 @@ class Assembler:
 
         with open(obj_filename, encoding="utf-8", mode="w+") as o:
             o.write(obj_file_str)
+
+    def objectify(self):
+        pass
+

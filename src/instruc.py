@@ -149,7 +149,7 @@ def convert_and_execute(lin):
         
         store_doubleword(add,reg[rt])
 
-    if op==36
+    if op==36:
 
         rt=int(lin[6:11],2)
         ra=int(lin[11:16],2)

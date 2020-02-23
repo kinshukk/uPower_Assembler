@@ -1,23 +1,25 @@
 import sys
 from Memory import Memory
 from Registers import Registers
-from Executioner import Executioner
-from Assembler import Assembler
+#from Executioner import Executioner
+from Assemble import Assembler
 
 class Simulator:
     def __init__(self, asm_filename, obj_filename="../test.o"):
         self.memory = Memory()
         self.registers = Registers()
-        self.executer = Executioner()
+#        self.executer = Executioner()
         self.assembler = Assembler()
 
+        self.asm_filename = asm_filename
+        self.obj_filename = obj_filename
 
         #address -> 8bit value
         #both are strings actually
         self.memory = {}
 
     def run(self):
-        self.assembler.assemble(asm_filename, obj_filename)
+        self.assembler.assemble(self.asm_filename, self.obj_filename)
 
         self.registers.cia = -1
         #TODO: NEED START OF TEXT SEGMENT HERE
@@ -40,6 +42,6 @@ if __name__ == "__main__":
     obj_filename = "test.o"
     if len(sys.argv[1:]) == 1:
         simulator = Simulator(asm_filename=sys.argv[1], obj_filename=obj_filename)
+        simulator.run()
     else:
         print(f"Usage: python3 Simulator.py <assembly file name>")
-
