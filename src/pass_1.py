@@ -17,13 +17,22 @@ def preprocess(lines):
         tokens = line.split()
         
         if startswith(line, 'la'):
-            #
-            rx, dry = tokens[1], tokens[2]
+            Rx, dry = tokens[1], tokens[2]
 
-
+            if '(' in dry:
+                i1 = dry.index('(')
+                i2 = dry.index(')')
+                D = dry[:i1]
+                Ry = dry[i1+1:i2]
+                lines[i] = f"addi {Rx}, {Ry}, {D}"
+            else:
+                #TODO: implement
+                print("not implemented value loading offset for la...")
+                pass
 
 def get_symbol_table_instructions(lines):
-    f = lines
+    f = preprocess(lines)
+
     start_data=0
     start_labels=0
     for i in range(len(f)):

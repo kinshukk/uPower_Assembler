@@ -30,9 +30,9 @@ def int_string(val,bits):
     return ans
 
 
-def convert_exec(lin):
-    
+def convert_and_execute(lin):
     op=int(lin[:6],2)
+
     if op==31:
         ex_op=int(lin[22:31],2)
         
@@ -177,13 +177,3 @@ def convert_exec(lin):
             registers.NIA=int_string(int(li+"0"*40,2)+int(CIA))
 
             return
-
-
-
-
-
-
-
-
-
-
