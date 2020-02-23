@@ -6,14 +6,14 @@ SUM: .word 0
 .text
 #.globl main
 main:
-    la R0, X
-    la R1, Y
-    lw R2, 0(R0)
-    lw R3, 0(R1)
+    la R1, X
+    la R2, Y
+    lwz R3, 0(R0)
+    lwz R4, 0(R1)
 
-    add R5, R2, R3
+    add R5, R3, R4
 
     la R6, SUM
-    sw R7, 0(R6)
+    stw R7, 0(R6)
 
 #    .end

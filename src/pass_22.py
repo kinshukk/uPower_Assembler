@@ -33,15 +33,12 @@ def convert_lines(lines, label, data):
     
     for z in tqdm(lines):    
         #unpack key, value
-        print(z)
         u=hex(z)
         v=lines[z]
        # print(f"u: {u}, v: {v}") 
         #function name (add, sub, etc.)
         func=v[:v.index(' ')]
         args=v[v.index(' '):]
-        print(func,"asdf ")
-        print(args)
 
         tmp=""
         req=args.split(",")
@@ -67,7 +64,7 @@ def convert_lines(lines, label, data):
             fin_ans[u]=tmp
     
         elif func in instruct_d.keys():
-            if instruct_d[func][-1] == 1:
+            if instruct_d[func][-1] == 1 and '(' in req[1]:
                 #func RT, D(RA)
                 RT = req[0].strip()
     
@@ -88,7 +85,7 @@ def convert_lines(lines, label, data):
                 tmp += "{:06b}".format(instruct_d[func][0])
                 tmp += "{:05b}".format(reg_to_num[req[0]])
                 tmp += "{:05b}".format(reg_to_num[req[1]])
-                tmp += "{:016b}".format(reg_to_num[req[2]])
+                tmp += "{:016b}".format(int(req[2], 0))
                 tmp = tmp.replace("0b","")
                 fin_ans[u]=tmp
             
@@ -127,7 +124,6 @@ def convert_lines(lines, label, data):
             tmp += "{:05b}".format(reg_to_num[req[0]])
             print(tmp)
             tmp += "{:05b}".format(reg_to_num[req[1]])
-            print(tmp)
 
             if req[2] not in label:
                 print("Label not found in symbol table!!")
@@ -149,7 +145,10 @@ def convert_lines(lines, label, data):
             fin_ans[u] = tmp
 
         else:
-           # print(f"command '{func}' not recognized...exiting")
+            print(f"command '{func}' not recognized...exiting")
             return
+
+
+    print(f"final ans: {fin_ans}")
 
     return fin_ans

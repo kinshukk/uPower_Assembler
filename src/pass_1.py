@@ -11,28 +11,52 @@ def startswith(line, starting, withspace=True):
     else:
         return False
 
-def preprocess(lines):
-    for i in range(len(lines)):
-        lines[i] = lines[i].strip()
-        tokens = line.split()
-        
-        if startswith(line, 'la'):
-            Rx, dry = tokens[1], tokens[2]
+def preprocess(lines, data):
+    res = []
 
+    for i in lines:
+        lines[i] = lines[i].strip()
+
+        if len(lines[i].strip()) == 0:
+            continue
+        if " " not in lines[i].strip():
+            res.append(lines[i])
+            continue
+
+        #print("lines[i]: {}".format(lines[i]))
+        tokens_str = lines[i][lines[i].index(' '):].strip()
+        tokens = tokens_str.split(',')
+       
+        #print(tokens)
+
+        if len(tokens) >= 2 and startswith(lines[i], 'la'):
+            Rx, dry = tokens[0].strip(), tokens[1].strip()
+
+            print("its la!")
             if '(' in dry:
+                print("found (")
                 i1 = dry.index('(')
                 i2 = dry.index(')')
                 D = dry[:i1]
                 Ry = dry[i1+1:i2]
                 lines[i] = f"addi {Rx}, {Ry}, {D}"
             else:
-                #TODO: implement
-                print("not implemented value loading offset for la...")
-                pass
+                print("no (")
+                
+                if dry in data:
+                    lines[i] = f"addi {Rx}, R0, {data[dry]}"
+                    print(f"la with address: {lines[i]}")
+                else:
+                    print(f"{dry} not found in data...")
+
+        else:
+            lines[i] = lines[i].strip()
+
+    return lines
 
 def get_symbol_table_instructions(lines):
-    f = preprocess(lines)
-
+    f = lines
+    
     start_data=0
     start_labels=0
     for i in range(len(f)):
@@ -42,7 +66,7 @@ def get_symbol_table_instructions(lines):
             start_data=i
 
 
-    cur_location=0x4000000
+    cur_location=0x000000
     labels={}
     instruction={}
     var=re.compile(r'.+:')
@@ -61,7 +85,8 @@ def get_symbol_table_instructions(lines):
         cur_location=cur_location+4
 
 
-    cur_location=0x10000000
+    #32+32 bits text and data segment size in header
+    cur_location=0x8
     data={}
     initilized={}
     for i in range(start_data+1,start_labels):
@@ -115,4 +140,6 @@ def get_symbol_table_instructions(lines):
                         flag=0
                 cur_location=cur_location+count
 
-        return (instruction, labels, data,initilized)
+    instruction = preprocess(instruction, data)
+
+    return (instruction, labels, data,initilized)
