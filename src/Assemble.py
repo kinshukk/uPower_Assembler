@@ -13,7 +13,6 @@ class Assembler:
             (instructions, label, data) = get_symbol_table_instructions(lines)
             print("instructions: {0} \ndata: {1} \nlabel: {2}".format(instructions,data,label))
             print("\n\n\n")
-
             object_lines = convert_lines(instructions, label, data)
 
             print(object_lines)

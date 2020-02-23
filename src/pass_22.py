@@ -20,7 +20,7 @@ def convert_lines(lines, label, data):
     instruct_b={"bc":[19,None,None,None,0,0],"bca":[19,None,None,None,1,0]}
     
     instruct_ds={"ld":[58,None,None,0,None,None],"std":[62,None,None,0,None,None]}
-    
+
     
     reg_to_num={"R"+str(i):i for i in range(32)}
     reg_to_num["LR"]=32
@@ -121,11 +121,14 @@ def convert_lines(lines, label, data):
             fin_ans[u]=tmp
     
         elif func in instruct_b.keys():
-            print("B start!!")
+            print("B start!! tmp : {}".format(tmp))
             tmp += "{:06b}".format(instruct_b[func][0])
+            print(tmp)
             tmp += "{:05b}".format(reg_to_num[req[0]])
+            print(tmp)
             tmp += "{:05b}".format(reg_to_num[req[1]])
-            
+            print(tmp)
+
             if req[2] not in label:
                 print("Label not found in symbol table!!")
                 return
@@ -135,10 +138,12 @@ def convert_lines(lines, label, data):
             if instruct_b[func][-2] == 0:
                 label_address -= int(u)
             
-            tmp += "{:014b}".format(label_address)
+            tmp += "{:14b}".format(label_address)
+            print(len(tmp))
             tmp += "{:01b}".format(instruct_b[func][-2])
+            print(tmp)
             tmp += "{:01b}".format(instruct_b[func][-1])
-
+            print(tmp)
             print("B TYPE!!!")
 
             fin_ans[u] = tmp
