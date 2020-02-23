@@ -63,16 +63,41 @@ def get_symbol_table_instructions(lines):
 
     cur_location=0x10000000
     data={}
+    initilized={}
     for i in range(start_data+1,start_labels):
         if bool(var.match(f[i])):
             arr=f[i].split()
             lable=re.split(":",arr[0])[0]
             data[lable]=hex(cur_location)
             datatype=arr[1][1:]
+            string=""
+            if datatype=="ascii":
+                for i in f[i]:
+                    if i=="\"" and flag==0:
+                        flag=1
+                        continue
+                    if flag==1 and i!="\"":
+                        string=string+f[i]
+                    if flag==1 and i=="\"":
+                        flag=0
+                initilized[str(cur_location)]=string
+            elif datatype=="word":
+                x=f[i].split(',')
+                for i in range(len(x)):
+                    if i==0:
+                        initilized[str(cur_location+i*4)]=x[i].split()[-1]
+                    else:
+                        initilized[str(cur_location+i*4)]=x[i]			
+            else:
+                y=f[i].split("#")
+                y=y[0].split()
+                if len(y)>=2:
+                    initilized[str(cur_location)]=y[2]
             if datatype=="byte":
                 cur_location=cur_location+1
             elif datatype=="word":
-                cur_location=cur_location+4
+                x=len(f[i].split(','))
+                cur_location=cur_location+4*x
             elif datatype=="halfword":
                 cur_location=cur_location+2
             elif datatype=="space":
@@ -90,4 +115,4 @@ def get_symbol_table_instructions(lines):
                         flag=0
                 cur_location=cur_location+count
 
-        return (instruction, labels, data)
+        return (instruction, labels, data,initilized)
