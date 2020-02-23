@@ -4,8 +4,9 @@ from pass_1 import get_symbol_table_instructions
 from pass_22 import convert_lines
 from instruc import int_string
 
-def int_string(val,bits):
-    val=(1<<(bits-1))-val
+def int_string(val,bits=32):
+    #assume val is negative
+    val=(1<<(bits-1))+val
     ans="1"+"{0:031b}".format(val)
     return ans
 
@@ -31,9 +32,17 @@ class Assembler:
         #text size
         obj_file_str += "{:032b}".format(len(instructions.keys()))
 
-        for d in initialized:
-            obj_file_str += 
+        for d in sorted(initialized.keys()):
+            val = int(initialized[d])
+            if val < 0:
+                val = int_string(val)
+            
+            obj_file_str += "{:032b}".format(val)
 
+        for i in sorted(object_lines.keys()):
+            obj_file_str += object_lines[i]
+
+    
 
         with open(obj_filename, encoding="utf-8", mode="w+") as o:
             o.write(obj_file_str)
