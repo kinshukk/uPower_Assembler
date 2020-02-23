@@ -34,7 +34,7 @@ def convert_lines(lines, label, data):
     for z in tqdm(lines):    
         #unpack key, value
         print(z)
-        u=z
+        u=hex(z)
         v=lines[z]
        # print(f"u: {u}, v: {v}") 
         #function name (add, sub, etc.)
