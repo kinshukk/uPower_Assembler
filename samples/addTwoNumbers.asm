@@ -8,8 +8,8 @@ SUM: .word 0
 main:
     la R1, X
     la R2, Y
-    lwz R3, 0(R0)
-    lwz R4, 0(R1)
+    lwz R3, 0(R1)
+    lwz R4, 0(R2)
 
     add R5, R3, R4
 

@@ -84,12 +84,14 @@ class Simulator:
             print(self.registers)
 
 
-    def twos_comp(self, val, bits):
-        """compute the 2's complement of int value val"""
-        if (val & (1 << (bits - 1))) != 0:
-            val = val - (1 << bits)        
-        return val            
-    
+    def twos_comp(self, val, bits=64):
+        '''
+            val is a string in signed 2's comp. gets the value as int
+        '''
+        if val[0] == '1':
+            return - 2**(bits - 1) + int(val[1:], 2)
+        return int(val, 2)
+
     def int_string(self, val, bits=64):
         if val > 0:
             return "{:064b}".format(val)
@@ -110,7 +112,7 @@ class Simulator:
                 ra=int(lin[11:16],2)
                 rb=int(lin[16:21],2)
                 
-                shift_amount=int(self.registers.R[rb][57:],2)
+                shift_amount=self.twos_comp(self.registers.R[rb][57:])
                 self.registers.R[ra]=self.registers.R[rs][:64-shift_amount]+"0"*shift_amount
                 return
     
@@ -119,17 +121,18 @@ class Simulator:
                 ra=int(lin[11:16],2)
                 rb=int(lin[16:21],2)
                 
-                shift_amount=int(self.registers.R[rb][57:],2)
+                shift_amount=self.twos_comp(self.registers.R[rb][57:])
                 self.registers.R[ra]="0"*shitf_amount + self.registers.R[rs][:64-shift_amount]
                 return
     
             if ex_op==266:
+                #add
                 rt=int(lin[6:11],2)
                 ra=int(lin[11:16],2)
                 rb=int(lin[16:21],2)
                  
                 
-                self.registers.R[rt]=self.int_string((self.twos_comp(int(self.registers.R[ra],2),64)+self.twos_comp(int(self.registers.R[rb],2),32)),64)
+                self.registers.R[rt]=self.int_string((self.twos_comp(self.registers.R[ra],64)+self.twos_comp(self.registers.R[rb],64)),64)
                 
                 return
             
@@ -138,7 +141,7 @@ class Simulator:
                 ra=int(lin[11:16],2)
                 rb=int(lin[16:21],2) 
                 
-                self.registers.R[rt]=self.int_string(-(self.twos_comp(int(self.registers.R[ra],2),64)+self.twos_comp(int(self.registers.R[rb],2),64)),64)
+                self.registers.R[rt]=self.int_string(-(self.twos_comp(self.registers.R[ra],64)+self.twos_comp(self.registers.R[rb],64)),64)
                 
                 return
     
@@ -149,7 +152,7 @@ class Simulator:
                 ra=int(lin[11:16],2)
                 rb=int(lin[16:21],2) 
     
-                self.registers.R[ra]=self.int_string((int(self.registers.R[rs],2))&(int(self.registers.R[rb],2)))
+                self.registers.R[ra]=self.int_string((self.twos_comp(self.registers.R[rs]))&(self.twos_comp(self.registers.R[rb])))
                 return 
     
             if ex_op==444:
@@ -157,7 +160,7 @@ class Simulator:
                 ra=int(lin[11:16],2)
                 rb=int(lin[16:21],2) 
     
-                self.registers.R[ra]=self.int_string((int(self.registers.R[rs],2))|(int(self.registers.R[rb],2)))
+                self.registers.R[ra]=self.int_string((self.twos_comp(self.registers.R[rs]))|(self.twos_comp(self.registers.R[rb])))
                 return 
     
             if ex_op==316:
@@ -165,58 +168,62 @@ class Simulator:
                 ra=int(lin[11:16],2)
                 rb=int(lin[16:21],2) 
     
-                self.registers.R[ra]=self.int_string((int(self.registers.R[rs],2))^(int(self.registers.R[rb],2)))
+                self.registers.R[ra]=self.int_string((self.twos_comp(self.registers.R[rs]))^(self.twos_comp(self.registers.R[rb])))
                 return 
     
         if op==14:
             rt=int(lin[6:11],2)
             ra=int(lin[11:16],2)
-            si=int(lin[16:],2) 
+            si=self.twos_comp(lin[16:],32) 
     
-            self.registers.R[rt]=self.int_string(int(self.registers.R[ra],2) + si)
+            self.registers.R[rt]=self.int_string(self.twos_comp(self.registers.R[ra]) + si)
     
             return
     
         if op==15:
+            # addi
             rt=int(lin[6:11],2)
             ra=int(lin[11:16],2)
-            si=int(lin[16:]+"0"*16,0)
+            si=self.twos_comp(lin[16:]+"0"*16,32)
     
-            rt=self.int_string(int(self.registers.R[ra],2)+si)
+            self.registers.R[rt]=self.int_string(self.twos_comp(self.registers.R[ra])+si)
             return
     
         if op==58:
+            # get double word
             rt=int(lin[6:11],2)
             ra=int(lin[11:16],2)
-            ds=int(lin[16:30]+"00",2)
+            ds=self.twos_comp(lin[16:30]+"00",32)
             
-            add=self.registers.R[ra]+ds;
+            add=str(self.twos_comp(self.registers.R[ra])+ds);
             
             # this function returns doubleword in signed bit format
-            rt=get_doubleword(self.int_string(add))
+            self.registers.R[rt]=self.memory.get_doublewordi(add)
     
             return
     
         if op==32:
-           
+            #lwz       
             rt=int(lin[6:11],2)
             ra=int(lin[11:16],2)
-            ds=int(lin[16:],2)
+            ds=self.twos_comp(lin[16:],32)
             
-            add=self.registers.R[ra]+ds;
+            add=str(self.twos_comp(self.registers.R[ra], 64)+ds)
     
-            self.registers.R[rt]="0"*32+get_word(self.int_string(add))
+            print(f"address in lwz :{add}")
+
+            self.registers.R[rt]="0"*32+self.memory.get_word(add)
     
             return
     
         if op==62:
             rt=int(lin[6:11],2)
             ra=int(lin[11:16],2)
-            ds=int(lin[16:30]+"00",2)
+            ds=self.twos_comp(lin[16:30]+"00",32)
             
-            add=self.registers.R[ra]+ds;
+            add=str(self.twos_comp(self.registers.R[ra])+ds)
             
-            store_doubleword(add,self.registers.R[rt])
+            self.memory.store_doubleword(add,self.registers.R[rt])
   
         if op==36:
     
@@ -224,9 +231,9 @@ class Simulator:
             ra=int(lin[11:16],2)
             d=int(lin[16:],2)
             
-            add=self.registers.R[ra]+ds;
+            add=str(int(self.registers.R[ra], 2)+d)
             
-            store_word(add,self.registers.R[rt][32:])
+            self.memory.store_word(add,self.registers.R[rt][32:])
     
             return
     
@@ -235,15 +242,15 @@ class Simulator:
             AA=int(lin[30],2)
             li=int(lin[6:30],2)
     
-            if AA=="1":
+            if AA==1:
     
-                registers.nia=li+"0"*40
+                registers.cia=li+"0"*40
                 
                 return
             
             if AA=="0":
     
-                registers.nia=self.int_string(int(li+"0"*40,2)+int(registers.cia))
+                registers.cia=self.int_string(int(li+"0"*40,2)+int(registers.cia,2))
     
                 return
 

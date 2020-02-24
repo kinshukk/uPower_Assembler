@@ -24,6 +24,7 @@ class Memory:
         return "".join([self.memory[str(int(address_str)+i)] for i in range(2)])
 
     def get_word(self, address_str):
+        print(f"address to access: {address_str}")
         return "".join([self.memory[str(int(address_str)+i)] for i in range(4)])
 
     def get_doubleword(self, address_str):
