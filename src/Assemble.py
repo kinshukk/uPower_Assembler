@@ -27,22 +27,46 @@ class Assembler:
             #TODO: Proper object file format
             obj_file_str = ""
 
-        #data size
-        obj_file_str += "{:032b}".format(len(initialized.keys()))
-        #text size
-        obj_file_str += "{:032b}".format(len(instructions.keys()))
+        initialized = {int(k, 0): initialized[k] for k in initialized.keys()}
+        print(f"\n\nconverted initialized: {initialized}\n\n")
 
+        #data size
+        len_data = int(sorted(initialized.keys())[-1]) - 4
+        headers = "{:032b}".format(len_data)
+        #text size
+
+        headers += "{:032b}".format(len(instructions) * 4)
+
+        print(f"\nheaders: {headers}")
+
+        
+        data_segment = ""
         for d in sorted(initialized.keys()):
+            print(f"initialized key: {d} value: {initialized[d]}")
             val = int(initialized[d])
             if val < 0:
                 val = int_string(val)
-            
-            obj_file_str += "{:032b}".format(val)
+                data_segment +=val
+            else:
+                data_segment += "{:032b}".format(val)
+        
+        print(f"data_segment: {data_segment}")
+
+
+        #converting from hex to int
+        object_lines = {int(k, 0):object_lines[k] for k in object_lines.keys()}
+
+        text_segment= ""
 
         for i in sorted(object_lines.keys()):
-            obj_file_str += object_lines[i]
+            print(f"object_lines key: {i} value: {object_lines[i]}")
+            text_segment += object_lines[i]
 
-    
+        print(f"text_segment: {text_segment}")
+
+        obj_file_str = headers + data_segment + text_segment
+
+        print(f"object file with text segment: {obj_file_str}")
 
         with open(obj_filename, encoding="utf-8", mode="w+") as o:
             o.write(obj_file_str)

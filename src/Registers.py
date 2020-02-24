@@ -13,11 +13,11 @@ class Registers:
         for i in range(32):
             res = res + f"R{i}: {self.R[i]}\n"
 
-        res = res + "CIA: {self.cia}\n"
-        res = res + "NIA: {self.nia}\n"
-        res = res + "LR: {self.lr}\n"
-        res = res + "SRR0: {self.srr0}\n"
-        res = res + "CR: {self.cr}\n"
+        res = res + f"CIA: {self.cia}\n"
+        res = res + f"NIA: {self.nia}\n"
+        res = res + f"LR: {self.lr}\n"
+        res = res + f"SRR0: {self.srr0}\n"
+        res = res + f"CR: {self.cr}\n"
         
         return res + "\n"
 

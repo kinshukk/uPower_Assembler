@@ -1,5 +1,21 @@
 from tqdm import tqdm
 
+from instruc import int_string
+
+def twos_comp(val, bits=32):
+    """compute the 2's complement of int value val"""
+    if (val & (1 << (bits - 1))) != 0:
+        val = val - (1 << bits)        
+    return val            
+
+def int_string(val,bits=24):
+    if val > 0:
+        return "{:024b}".format(val)
+
+    val=(1<<(bits-1))+val
+    ans="1"+"{0:023b}".format(val)
+    return ans
+
 def convert_lines(lines, label, data):
     instruct_x={"and":[31,None,0,28,None,None],"exstw":[31,None,0,986,None,None],"nand":[31,None,0,476,None,None],"or":[31,None,0,444,None,None],"xor":[31,None,0,316,None,None],"sld":[31,None,0,794,None,None],"srd":[31,None,0,539,None,None],"srad":[31,None,0,794,None,None],"cmp":[31,None,0,0,None,None]}
     
@@ -31,7 +47,7 @@ def convert_lines(lines, label, data):
     fin_ans={}
     
     
-    for z in tqdm(lines):    
+    for z in tqdm(lines):
         #unpack key, value
         u=hex(z)
         v=lines[z]
@@ -93,11 +109,27 @@ def convert_lines(lines, label, data):
                 print("\n\nO crap something isn't right. D type assembly\n\n")
     
         elif func in instruct_i.keys():
-            tmp += "{:06b}".format(instruct_xo[func][0])
-            tmp += "{:024b}".format(reg_to_num[req[0]])
-            tmp += "{:01b}".format(instruct_xo[func][-2])
-            tmp += "{:09b}".format(instruct_xo[func][-1])
-            tmp = tmp.replace("0b","")
+            tmp += "{:06b}".format(instruct_i[func][0])
+
+            AA = instruct_i[func][-2]
+            LI = req[0]
+
+            if AA == 0:
+                LI_address = int(label[LI])
+                #-4 because CIA gets +4 every time
+                offset = int_string(LI_address - z - 4, 24)
+                print(f"LI: {LI} LI_address: {LI_address} | offset: {offset}")
+
+                tmp += offset
+            else:
+                print("Not Implemented AA=1, ignoring...")
+                continue
+
+
+            #tmp += "{:024b}".format(reg_to_num[req[0]])
+            #tmp += "{:01b}".format(instruct_i[func][-2])
+            #tmp += "{:01b}".format(instruct_i[func][-1])
+            #tmp = tmp.replace("0b","")
             fin_ans[u]=tmp
     
         elif func in instruct_ds.keys():
@@ -147,7 +179,6 @@ def convert_lines(lines, label, data):
         else:
             print(f"command '{func}' not recognized...exiting")
             return
-
 
     print(f"final ans: {fin_ans}")
 

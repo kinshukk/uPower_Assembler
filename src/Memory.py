@@ -14,20 +14,20 @@ class Memory:
 
     #single byte
     def set_address(self, address_str, value):
+        print(f"setting memory address {address_str} to value {value}")
         self.memory[address_str] = value
-
 
     def get_byte(self, address_str):
         return self.memory[address_str]
 
     def get_halfword(self, address_str):
-        res = "".join([self.memory[int(address_str)+i] for i in range(2)])
-        
+        return "".join([self.memory[str(int(address_str)+i)] for i in range(2)])
+
     def get_word(self, address_str):
-        res = "".join([self.memory[int(address_str)+i] for i in range(4)])
+        return "".join([self.memory[str(int(address_str)+i)] for i in range(4)])
 
     def get_doubleword(self, address_str):
-        res = "".join([self.memory[int(address_str)+i] for i in range(8)])
+        return "".join([self.memory[str(int(address_str)+i)] for i in range(8)])
 
     def store_byte(self, address_str, value):
         if len(value) == 8:
