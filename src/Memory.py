@@ -60,3 +60,13 @@ class Memory:
         else:
             print(f"store_halfword takes only 64 bit values, but got {len(value)}")
             sys.exit(0)
+
+    def set_n_bytes(self, address_str, value, n):
+        if len(value) // 8 == n:
+            for i in range(n):
+                self.store_byte(
+                        str(int(address_str) + i*8),
+                        value[i*8:8 + i*8]
+                )
+        else:
+            raise ValueError("length {len(value)} not good")

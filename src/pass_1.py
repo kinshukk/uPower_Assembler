@@ -144,7 +144,7 @@ def get_symbol_table_instructions(lines):
                         count=count+1
                     if flag==1 and i=="\"":
                         flag=0
-                cur_location=cur_location+count
+                cur_location=cur_location+count+1
 
     print(f"\n\nlabels: {labels}\n\n")
     instruction = preprocess(instruction, data, labels)

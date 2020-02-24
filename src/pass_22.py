@@ -53,13 +53,20 @@ def convert_lines(lines, label, data):
         v=lines[z]
        # print(f"u: {u}, v: {v}") 
         #function name (add, sub, etc.)
+        #system call
+        if v.strip() == "syscall":
+            tmp = "0" * 32
+            fin_ans[u] = tmp
+            continue
+        
         func=v[:v.index(' ')]
         args=v[v.index(' '):]
 
         tmp=""
         req=args.split(",")
         req=[i.replace(" ","") for i in req]
-    
+
+
         if func in instruct_x.keys():
             tmp=tmp+"{:06b}".format(instruct_x[func][0])
             tmp=tmp+"{:05b}".format(reg_to_num[req[1]])

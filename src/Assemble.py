@@ -46,12 +46,17 @@ class Assembler:
         data_segment = ""
         for d in sorted(initialized.keys()):
             print(f"initialized key: {d} value: {initialized[d]}")
-            val = int(initialized[d])
-            if val < 0:
-                val = int_string(val)
-                data_segment +=val
+            if type(initialized[d])==type("bullet_basavraj"):
+                for v in initialized[d]:
+                    data_segment+="{:08b}".format(ord(v))
+                    data_segment+="{:08b}".format(ord("\0"))
             else:
-                data_segment += "{:032b}".format(val)
+                val = int(initialized[d])
+                if val < 0:
+                    val = int_string(val)
+                    data_segment +=val
+                else:
+                    data_segment += "{:032b}".format(val)
         
         print(f"data_segment: {data_segment}")
 

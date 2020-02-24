@@ -102,6 +102,31 @@ class Simulator:
     
     
     def convert_and_execute(self, lin):
+        '''
+            syscall
+            R30: syscall type
+            R31: syscall address
+        '''
+        if lin == "0"*32:
+            call_type = int(self.registers.R[30], 2)
+            address = self.registers.R[31]
+
+            if call_type == 1:
+                #word input
+                inp = self.int_string(int(input(">>>")))
+                self.memory.store_doubleword(address, inp)
+            if call_type == 2:
+                #word output
+                value = self.memory.get_doubleword(str(self.registers.R[31]))
+                print(f"\n{value}\n")
+            if call_type == 3:
+                #string input
+                pass
+            if call_type == 4:
+                #string output
+
+                pass
+                
         op=int(lin[:6],2)
     
         if op==31:
