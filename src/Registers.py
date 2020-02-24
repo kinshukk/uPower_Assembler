@@ -7,6 +7,7 @@ class Registers:
         self.srr0 = '0' * 64
         self.cr = '0' * 32
 
+
     def __str__(self):
         res = "Register Status:\n"
 

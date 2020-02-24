@@ -31,7 +31,10 @@ class Assembler:
         print(f"\n\nconverted initialized: {initialized}\n\n")
 
         #data size
-        len_data = int(sorted(initialized.keys())[-1]) - 4
+        if len(initialized.keys()) == 0:
+            len_data = 0
+        else:
+            len_data = int(sorted(initialized.keys())[-1]) - 4
         headers = "{:032b}".format(len_data)
         #text size
 

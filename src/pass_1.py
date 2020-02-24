@@ -11,7 +11,7 @@ def startswith(line, starting, withspace=True):
     else:
         return False
 
-def preprocess(lines, data):
+def preprocess(lines, data, label):
     res = []
 
     for i in lines:
@@ -49,6 +49,12 @@ def preprocess(lines, data):
                 else:
                     print(f"{dry} not found in data...")
 
+        elif len(tokens) == 1:
+            if startswith(lines[i], 'beq'):
+                lines[i] = f"bc R0, R30, {tokens[0]}"
+            if startswith(lines[i], 'bne'):
+                lines[i] = f"bc R0, R31, {tokens[0]}"
+
         else:
             lines[i] = lines[i].strip()
 
@@ -73,7 +79,7 @@ def get_symbol_table_instructions(lines):
     for i in range(start_labels+1,len(f)):
         if bool(var.match(f[i])):
             x=re.split(":",f[i])
-            labels[x[0]]=hex(cur_location)
+            labels[x[0].strip()] = hex(cur_location)
             cur_location=cur_location-4
         else:
             tmp=f[i].split('#')[0]
@@ -140,6 +146,7 @@ def get_symbol_table_instructions(lines):
                         flag=0
                 cur_location=cur_location+count
 
-    instruction = preprocess(instruction, data)
+    print(f"\n\nlabels: {labels}\n\n")
+    instruction = preprocess(instruction, data, labels)
 
     return (instruction, labels, data,initilized)

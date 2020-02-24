@@ -40,7 +40,7 @@ class Memory:
     def store_halfword(self, address_str, value):
         if len(value) == 16:
             for i in range(2):
-                self.memory[str(int(address_str) + i)] = value
+                self.memory[str(int(address_str) + i)] = value[i*8: 8 + i*8]
         else:
             print(f"store_halfword takes only 16 bit values, but got {len(value)}")
             sys.exit(0)
@@ -48,7 +48,7 @@ class Memory:
     def store_word(self, address_str, value):
         if len(value) == 32:
             for i in range(4):
-                self.memory[str(int(address_str) + i)] = value
+                self.memory[str(int(address_str) + i)] = value[i*8:8 + i*8]
         else:
             print(f"store_word takes only 32 bit values, but got {len(value)}")
             sys.exit(0)
@@ -56,7 +56,7 @@ class Memory:
     def store_doubleword(self, address_str, value):
         if len(value) == 64:
             for i in range(8):
-                self.memory[str(int(address_str) + i)] = value
+                self.memory[str(int(address_str) + i)] = value[i*8:8 + i*8]
         else:
             print(f"store_halfword takes only 64 bit values, but got {len(value)}")
             sys.exit(0)

@@ -93,7 +93,7 @@ class Simulator:
         return int(val, 2)
 
     def int_string(self, val, bits=64):
-        if val > 0:
+        if val >= 0:
             return "{:064b}".format(val)
     
         val=(1<<(bits-1))+val
@@ -105,8 +105,33 @@ class Simulator:
         op=int(lin[:6],2)
     
         if op==31:
+
+            #X-Type instructions
             ex_op=int(lin[22:31],2)
             
+            #cmp
+            if ex_op == 0:
+                ranum=int(lin[6:11],2)
+                bf=int(lin[11:16],2)
+                rbnum=int(lin[16:21],2)
+
+                ra = self.registers.R[ranum]
+                rb = self.registers.R[rbnum]
+                bfval = self.twos_comp(self.registers.R[bf]) 
+
+
+                if bfval != 7:
+                    raise ValueError("BF is supposed to be 7")
+
+                print("cmp: ra")
+                if ra < rb:
+                    self.registers.cr = self.registers.cr[:-4] + "1001"
+                elif ra == rb:
+                    self.registers.cr = self.registers.cr[:-4] + "0010"
+                else:
+                    self.registers.cr = self.registers.cr[:-4] + "0101"
+
+
             if ex_op==27:
                 rs=int(lin[6:11],2)
                 ra=int(lin[11:16],2)
@@ -172,11 +197,15 @@ class Simulator:
                 return 
     
         if op==14:
+            #addi
             rt=int(lin[6:11],2)
             ra=int(lin[11:16],2)
             si=self.twos_comp(lin[16:],32) 
     
-            self.registers.R[rt]=self.int_string(self.twos_comp(self.registers.R[ra]) + si)
+            res = self.twos_comp(self.registers.R[ra]) + si
+            print(f"addi result: {res}")
+
+            self.registers.R[rt]=self.int_string(res)
     
             return
     
@@ -238,7 +267,6 @@ class Simulator:
             return
     
         if op==18:
-    
             AA=int(lin[30],2)
             li=int(lin[6:30],2)
     
@@ -250,10 +278,33 @@ class Simulator:
             
             if AA=="0":
     
-                registers.cia=self.int_string(int(li+"0"*40,2)+int(registers.cia,2))
+                self.registers.cia=self.int_string(int(li+"0"*40,2)+int(self.registers.cia,2))
     
                 return
 
+        if op==19:
+            # bc instruction
+            bo=int(lin[6:11],2)
+            bi=int(lin[11:16],2)
+            add=self.twos_comp(lin[16:30],14)
+
+            print(f"bo: {bo} | bi: {bi} | address: {add}")
+
+            if bi==28 and self.registers.cr[28]=='1':
+                self.registers.cia+=add;
+                return 
+            
+            elif bi==29 and self.registers.cr[29]=='1':
+                self.registers.cia+=add
+                return
+
+            elif bi==30 and self.registers.cr[30]=='1':
+                self.registers.cia+=add
+                return
+
+            elif bi==31 and self.registers.cr[31]=='1':
+                self.registers.cia+=add
+                return
 
 if __name__ == "__main__":
     obj_filename = "test.o"

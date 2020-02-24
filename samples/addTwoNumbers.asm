@@ -14,6 +14,7 @@ main:
     add R5, R3, R4
 
     la R6, SUM
-    stw R7, 0(R6)
+    stw R5, 0(R6)
 
+    lwz R8, 0(R6)
 #    .end

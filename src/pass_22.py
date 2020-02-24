@@ -158,15 +158,24 @@ def convert_lines(lines, label, data):
             tmp += "{:05b}".format(reg_to_num[req[1]])
 
             if req[2] not in label:
-                print("Label not found in symbol table!!")
+                raise RuntimeError(f"Label: {req[2]} not found in symbol table!!")
                 return
 
             label_address = int(label[req[2]], 0)
             
             if instruct_b[func][-2] == 0:
-                label_address -= int(u)
+                label_address -= int(u, 0) + 4
             
-            tmp += "{:14b}".format(label_address)
+            def int_to_string14(val):
+                if val > 0:
+                    return "{:014b}".format(val)
+            
+                val=(1<<(13))+val
+                ans="1"+"{0:013b}".format(val)
+                return ans
+            
+
+            tmp += int_to_string14(label_address)
             print(len(tmp))
             tmp += "{:01b}".format(instruct_b[func][-2])
             print(tmp)
