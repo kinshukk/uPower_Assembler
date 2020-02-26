@@ -162,7 +162,8 @@ class Simulator:
                 rb=int(lin[16:21],2)
 
                 shift_amount=self.twos_comp(self.registers.R[rb][57:])
-                self.registers.R[ra]=self.registers.R[rs][:64-shift_amount]+"0"*shift_amount
+                self.registers.R[ra]=self.registers.R[rs][shift_amount:]+"0"*shift_amount
+                print(f"ra {ra} rb {rb} rs {rs} shift_amount {shift_amount}")
                 return
 
             if ex_op==539:
