@@ -118,7 +118,7 @@ class Simulator:
             if call_type == 2:
                 #word output
                 value = self.memory.get_doubleword(str(self.registers.R[31]))
-                print(f"\n{value}\n")
+                print(f"\n[OUTPUT BINARY]: {value}\n[OUTPUT DECIMAL]: {self.twos_comp(value)}")
             if call_type == 3:
                 #string input
                 pass
