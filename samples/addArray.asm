@@ -13,7 +13,7 @@
 
         lwz R6, 0(R5)
 
-        add R4, R4, R5
+        add R4, R4, R6
 
         addi R5, R5, 4
 
