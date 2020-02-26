@@ -34,7 +34,14 @@ class Assembler:
         if len(initialized.keys()) == 0:
             len_data = 0
         else:
-            len_data = int(sorted(initialized.keys())[-1]) - 4
+            #-8 for headers
+            last_key = sorted(initialized.keys())[-1]
+            if initialized[last_key][-1] == '\0':
+                len_data = int(last_key) + len(initialized[last_key]) - 8
+            else:
+                len_data = last_key - 4
+
+
         headers = "{:032b}".format(len_data)
         #text size
 
@@ -42,7 +49,7 @@ class Assembler:
 
         print(f"\nheaders: {headers}")
 
-        
+
         data_segment = ""
         for d in sorted(initialized.keys()):
             print(f"initialized key: {d} value: {initialized[d]}")
@@ -51,13 +58,18 @@ class Assembler:
                     # data_segment+="{:08b}".format(ord(v))
                     # data_segment+="{:08b}".format(ord("\0"))
             # else:
-            val = int(initialized[d])
-            if val < 0:
-                val = int_string(val)
-                data_segment +=val
+            if initialized[d][-1]=="\0":
+                for v in initialized[d]:
+                    data_segment += "{:08b}".format(ord(v))
+
             else:
-                data_segment += "{:032b}".format(val)
-        
+                val = int(initialized[d])
+                if val < 0:
+                    val = int_string(val)
+                    data_segment +=val
+                else:
+                    data_segment += "{:032b}".format(val)
+
         print(f"data_segment: {data_segment}")
 
 
@@ -81,4 +93,3 @@ class Assembler:
 
     def objectify(self):
         pass
-

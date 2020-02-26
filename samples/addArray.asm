@@ -19,5 +19,3 @@
 
         cmp R3, R2, R1
         bne loop
-
-    

@@ -26,7 +26,7 @@ def preprocess(lines, data, label):
         #print("lines[i]: {}".format(lines[i]))
         tokens_str = lines[i][lines[i].index(' '):].strip()
         tokens = tokens_str.split(',')
-       
+
         #print(tokens)
 
         if len(tokens) >= 2 and startswith(lines[i], 'la'):
@@ -42,7 +42,7 @@ def preprocess(lines, data, label):
                 lines[i] = f"addi {Rx}, {Ry}, {D}"
             else:
                 print("no (")
-                
+
                 if dry in data:
                     lines[i] = f"addi {Rx}, R0, {data[dry]}"
                     print(f"la with address: {lines[i]}")
@@ -62,7 +62,7 @@ def preprocess(lines, data, label):
 
 def get_symbol_table_instructions(lines):
     f = lines
-    
+
     start_data=0
     start_labels=0
     for i in range(len(f)):
@@ -101,24 +101,27 @@ def get_symbol_table_instructions(lines):
             lable=re.split(":",arr[0])[0]
             data[lable]=hex(cur_location)
             datatype=arr[1][1:]
+            flag=0
             string=""
+            print(f[i])
             if datatype=="ascii":
-                for i in f[i]:
-                    if i=="\"" and flag==0:
+                for x in f[i]:
+                    #print(i)
+                    if x=="\"" and flag==0:
                         flag=1
                         continue
-                    if flag==1 and i!="\"":
-                        string=string+f[i]
-                    if flag==1 and i=="\"":
+                    if flag==1 and x!="\"":
+                        string=string+x
+                    if flag==1 and x=="\"":
                         flag=0
-                initilized[str(cur_location)]=string
+                initilized[str(cur_location)]=string+'\0'
             elif datatype=="word":
                 x=f[i].split(',')
                 for i in range(len(x)):
                     if i==0:
                         initilized[str(cur_location+i*4)]=x[i].split()[-1]
                     else:
-                        initilized[str(cur_location+i*4)]=x[i]			
+                        initilized[str(cur_location+i*4)]=x[i]
             else:
                 y=f[i].split("#")
                 y=y[0].split()
@@ -136,16 +139,16 @@ def get_symbol_table_instructions(lines):
             elif datatype=="ascii":
                 flag=0
                 count=0
-                for i in f[i]:
-                    if i=="\"" and flag==0:
+                for x in f[i]:
+                    if x=="\"" and flag==0:
                         flag=1
                         continue
-                    if flag==1 and i!="\"":
+                    if flag==1 and x!="\"":
                         count=count+1
-                    if flag==1 and i=="\"":
+                    if flag==1 and x=="\"":
                         flag=0
 
-                cur_location=cur_location+count
+                cur_location=cur_location+count+1
 
     print(f"\n\nlabels: {labels}\n\n")
     instruction = preprocess(instruction, data, labels)

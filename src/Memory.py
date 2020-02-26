@@ -28,6 +28,7 @@ class Memory:
         return "".join([self.memory[str(int(address_str)+i)] for i in range(4)])
 
     def get_doubleword(self, address_str):
+        print(f"get double_word address_str: {address_str}")
         return "".join([self.memory[str(int(address_str)+i)] for i in range(8)])
 
     def store_byte(self, address_str, value):
@@ -44,7 +45,7 @@ class Memory:
         else:
             print(f"store_halfword takes only 16 bit values, but got {len(value)}")
             sys.exit(0)
-    
+
     def store_word(self, address_str, value):
         if len(value) == 32:
             for i in range(4):
@@ -52,7 +53,7 @@ class Memory:
         else:
             print(f"store_word takes only 32 bit values, but got {len(value)}")
             sys.exit(0)
-    
+
     def store_doubleword(self, address_str, value):
         if len(value) == 64:
             for i in range(8):
@@ -70,3 +71,18 @@ class Memory:
                 )
         else:
             raise ValueError("length {len(value)} not good")
+
+    def get_string(self, address):
+        address = str(int(address, 2))
+
+        if address in self.memory:
+            string=""
+
+            while self.memory[address]!='0'*8:
+                char = chr(int(self.memory[address], 2))
+                string = string + char
+                address = str(int(address) + 1)
+
+            return string
+        else:
+            raise RuntimeError("So stupid")
