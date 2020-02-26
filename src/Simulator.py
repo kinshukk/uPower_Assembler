@@ -34,13 +34,13 @@ class Simulator:
 
         print(f"\n\nObject file inside Simulator.py: {obj_data}")
 
-        print(f"length of object file in bits: {len(obj_data)} | words: {len(obj_data) / 32}")
+        # print(f"length of object file in bits: {len(obj_data)} | words: {len(obj_data) / 32}")
 
         len_data = int(obj_data[:32], 2)
         len_text = int(obj_data[32:64], 2)
-        print(f"len of data: {len_data} | len of text: {len_text}")
+        # print(f"len of data: {len_data} | len of text: {len_text}")
 
-        print(f"{obj_data[:32]} | {obj_data[32:64]}")
+        # print(f"{obj_data[:32]} | {obj_data[32:64]}")
 
         #for now
         data_start = 8
@@ -50,17 +50,17 @@ class Simulator:
         data = obj_data[64:len_data*8+64]
         text = obj_data[64+len_data*8:]
 
-        print("data: {data}\n\ntext: {text}")
+        # print("data: {data}\n\ntext: {text}")
 
-        print("starting writing data to memory")
+        # print("starting writing data to memory")
         for i in range(len_data):
             self.memory.set_address(str(data_start + i), data[i*8:8+(i*8)])
 
-        print("\n\nstarting writing text to memory")
+        # print("\n\nstarting writing text to memory")
         for i in range(len_text):
             self.memory.set_address(str(text_start + i), text[i*8:8+(i*8)])
 
-        print(f"\n\ndata:{data} {len(data)}\n\ntext: {text} {len(text)}")
+        # print(f"\n\ndata:{data} {len(data)}\n\ntext: {text} {len(text)}")
 
         #################################################################
         #now the big bois
@@ -68,9 +68,9 @@ class Simulator:
         self.registers.cia = text_start
         self.registers.nia = text_start + WORD
 
-        print(f"\n\nmemory:{self.memory.memory}\n\n")
-        print("before loop")
-        print(f"cia: {self.registers.cia} | cia in memory? {self.registers.cia in self.memory.memory.keys()}")
+        # print(f"\n\nmemory:{self.memory.memory}\n\n")
+        # print("before loop")
+        # print(f"cia: {self.registers.cia} | cia in memory? {self.registers.cia in self.memory.memory.keys()}")
 
         while str(self.registers.cia) in self.memory.memory.keys():
             input("\n\npress [enter] to execute next instruction")
@@ -82,8 +82,6 @@ class Simulator:
 
             self.registers.cia += 4
             print(self.registers)
-            print(self.memory.memory)
-
 
     def twos_comp(self, val, bits=64):
         '''
@@ -126,9 +124,7 @@ class Simulator:
             if call_type == 4:
                 #string output
                 value=self.memory.get_string(str(self.registers.R[31]))
-                print(value)
-
-                pass
+                print(f"\n[OUTPUT]\n{value}\n")
 
         op=int(lin[:6],2)
 
@@ -231,7 +227,7 @@ class Simulator:
             si=self.twos_comp(lin[16:],32)
 
             res = self.twos_comp(self.registers.R[ra]) + si
-            print(f"addi result: {res}")
+            # print(f"addi result: {res}")
 
             self.registers.R[rt]=self.int_string(res)
 
@@ -267,7 +263,7 @@ class Simulator:
 
             add=str(self.twos_comp(self.registers.R[ra], 64)+ds)
 
-            print(f"address in lwz :{add}")
+            # print(f"address in lwz :{add}")
 
             self.registers.R[rt]="0"*32+self.memory.get_word(add)
 
@@ -316,7 +312,7 @@ class Simulator:
             bi=int(lin[11:16],2)
             add=self.twos_comp(lin[16:30],14)
 
-            print(f"bo: {bo} | bi: {bi} | address: {add}")
+            # print(f"bo: {bo} | bi: {bi} | address: {add}")
 
             if bi==28 and self.registers.cr[28]=='1':
                 self.registers.cia+=add;

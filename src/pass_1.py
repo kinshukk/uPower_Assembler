@@ -32,20 +32,20 @@ def preprocess(lines, data, label):
         if len(tokens) >= 2 and startswith(lines[i], 'la'):
             Rx, dry = tokens[0].strip(), tokens[1].strip()
 
-            print("its la!")
+            # print("its la!")
             if '(' in dry:
-                print("found (")
+                # print("found (")
                 i1 = dry.index('(')
                 i2 = dry.index(')')
                 D = dry[:i1]
                 Ry = dry[i1+1:i2]
                 lines[i] = f"addi {Rx}, {Ry}, {D}"
             else:
-                print("no (")
+                # print("no (")
 
                 if dry in data:
                     lines[i] = f"addi {Rx}, R0, {data[dry]}"
-                    print(f"la with address: {lines[i]}")
+                    # print(f"la with address: {lines[i]}")
                 else:
                     print(f"{dry} not found in data...")
 
@@ -103,7 +103,7 @@ def get_symbol_table_instructions(lines):
             datatype=arr[1][1:]
             flag=0
             string=""
-            print(f[i])
+            # print(f[i])
             if datatype=="ascii":
                 for x in f[i]:
                     #print(i)

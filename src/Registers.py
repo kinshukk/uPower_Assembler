@@ -15,11 +15,11 @@ class Registers:
             res = res + f"R{i}: {self.R[i]}\n"
 
         res = res + f"CIA: {self.cia}\n"
-        res = res + f"NIA: {self.nia}\n"
+        # res = res + f"NIA: {self.nia}\n"
         res = res + f"LR: {self.lr}\n"
         res = res + f"SRR0: {self.srr0}\n"
         res = res + f"CR: {self.cr}\n"
-        
+
         return res + "\n"
 
     def __repr__(self):

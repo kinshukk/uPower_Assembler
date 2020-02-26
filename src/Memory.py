@@ -14,7 +14,7 @@ class Memory:
 
     #single byte
     def set_address(self, address_str, value):
-        print(f"setting memory address {address_str} to value {value}")
+        # print(f"setting memory address {address_str} to value {value}")
         self.memory[address_str] = value
 
     def get_byte(self, address_str):
@@ -24,11 +24,11 @@ class Memory:
         return "".join([self.memory[str(int(address_str)+i)] for i in range(2)])
 
     def get_word(self, address_str):
-        print(f"address to access: {address_str}")
+        # print(f"address to access: {address_str}")
         return "".join([self.memory[str(int(address_str)+i)] for i in range(4)])
 
     def get_doubleword(self, address_str):
-        print(f"get double_word address_str: {address_str}")
+        # print(f"get double_word address_str: {address_str}")
         return "".join([self.memory[str(int(address_str)+i)] for i in range(8)])
 
     def store_byte(self, address_str, value):
@@ -70,7 +70,7 @@ class Memory:
                         value[i*8:8 + i*8]
                 )
         else:
-            raise ValueError("length {len(value)} not good")
+            raise ValueError("length {len(value)} not a multiple of 8")
 
     def get_string(self, address):
         address = str(int(address, 2))
@@ -85,4 +85,4 @@ class Memory:
 
             return string
         else:
-            raise RuntimeError("So stupid")
+            raise RuntimeError("get_string: address not in memory")
